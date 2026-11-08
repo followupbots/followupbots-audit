@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<!--
+  Short audit (4 questions, ~45 seconds). SHIPPED Nov 8, 2026.
+  Second entry alongside the full 10-question audit (index.html) — the
+  full audit stays live for visitors who want the deeper version.
+  Same scoring shape (0/1/2 per answer), same three bands, same signup
+  endpoint. Score is /8 on the page; signup POST sends the /20-equivalent
+  (Math.round(raw * 2.5)) plus audit_version=short so the sheet can tag
+  short-vs-full signups. Results page links to the full audit.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Work Friction Audit — Quick Check · Work With Bots</title>
+<meta name="description" content="Four questions. An instant friction score for how your agency handles client follow-ups — and the first fix to make.">
+<style>
+  :root{
+    --indigo:#1B1040; --indigo2:#2A1B5E; --teal:#2DE1C2; --teal-dim:#1FBFA6;
+    --paper:#FFF9F0; --ink:#221A3D; --muted:#5C5470; --line:#E7DFCE;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--indigo); color:var(--ink); line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:28px 18px 56px;}
+  header{display:flex; align-items:center; gap:12px; margin-bottom:26px;}
+  header img{width:52px; height:52px; border-radius:14px; background:var(--paper); padding:4px;}
+  header .brand{color:#fff;}
+  header .brand .name{font-weight:800; font-size:20px; letter-spacing:.2px;}
+  header .brand .tag{color:var(--teal); font-size:13px; font-weight:600;}
+  .card{background:var(--paper); border-radius:20px; padding:26px 22px; box-shadow:0 10px 30px rgba(0,0,0,.25);}
+  h1{font-size:27px; line-height:1.2; color:var(--ink); margin-bottom:10px;}
+  .lede{color:var(--muted); font-size:16px; margin-bottom:6px;}
+  .meta{color:var(--teal-dim); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:22px;}
+  fieldset{border:none; border-top:1px solid var(--line); padding:18px 0 6px; margin-top:6px;}
+  legend{font-weight:700; font-size:16px; padding-top:14px; margin-bottom:4px; float:left; width:100%;}
+  .qnum{color:var(--teal-dim); font-weight:800; margin-right:6px;}
+  label.opt{
+    display:block; background:#fff; border:1.5px solid var(--line); border-radius:12px;
+    padding:11px 14px; margin:8px 0; cursor:pointer; font-size:15px; transition:border-color .15s, background .15s;
+  }
+  label.opt:hover{border-color:var(--teal-dim);}
+  label.opt input{margin-right:9px; accent-color:var(--teal-dim);}
+  label.opt:has(input:checked){border-color:var(--teal-dim); background:#EFFFFB;}
+  .progress{height:8px; background:#EDE6D6; border-radius:99px; overflow:hidden; margin:20px 0 4px;}
+  .progress > div{height:100%; width:0%; background:var(--teal); transition:width .25s;}
+  .progress-label{font-size:13px; color:var(--muted); margin-bottom:14px;}
+  button.cta{
+    display:block; width:100%; background:var(--indigo); color:#fff; border:none; cursor:pointer;
+    font-size:17px; font-weight:800; padding:15px 20px; border-radius:14px; margin-top:16px;
+  }
+  button.cta:disabled{opacity:.45; cursor:not-allowed;}
+  button.cta:not(:disabled):hover{background:var(--indigo2);}
+  #result{display:none; margin-top:26px; border-top:2px dashed var(--line); padding-top:22px;}
+  .score-row{display:flex; align-items:baseline; gap:12px;}
+  .score{font-size:52px; font-weight:900; color:var(--indigo); line-height:1;}
+  .score small{font-size:20px; color:var(--muted); font-weight:700;}
+  .band{font-size:20px; font-weight:800; color:var(--teal-dim);}
+  #result p{margin-top:10px; font-size:16px;}
+  #result .step{background:#EFFFFB; border:1.5px solid var(--teal-dim); border-radius:12px; padding:14px 16px; margin-top:14px;}
+  #result .step b{display:block; margin-bottom:4px;}
+  .signup{margin-top:24px;}
+  .signup h2{font-size:19px; margin-bottom:6px;}
+  .signup p{color:var(--muted); font-size:15px; margin-bottom:12px;}
+  .signup input[type=email], .signup select{
+    width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:12px;
+    font-size:16px; margin-bottom:10px; background:#fff; color:var(--ink);
+  }
+  .form-note{font-size:13px; color:var(--muted); margin-top:10px; min-height:18px;}
+  footer{margin-top:30px; text-align:center; color:#B9B0D9; font-size:14px;}
+  footer a{color:var(--teal); text-decoration:none; font-weight:700;}
+  .kit{margin-top:22px; background:var(--indigo2); color:#fff; border-radius:16px; padding:18px 20px;}
+  .kit b{color:var(--teal);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="robot-logo.png" alt="Work With Bots robot logo">
+    <div class="brand">
+      <div class="name">Work With Bots</div>
+      <div class="tag">Meetings in. Follow-ups out. Nothing invented.</div>
+    </div>
+  </header>
+
+  <div class="card">
+    <h1>The Client Work Friction Audit</h1>
+    <p class="lede">How much work leaks between a client meeting and the follow-up that was supposed to close it? Answer honestly — your score is instant.</p>
+    <div class="meta">4 questions · under a minute · free</div>
+
+    <form id="audit-form">
+      <fieldset>
+        <legend><span class="qnum">1.</span>After a client meeting ends, how are the action items captured?</legend>
+        <label class="opt"><input type="radio" name="q1" value="0">In a shared register — every item has an owner and a due date</label>
+        <label class="opt"><input type="radio" name="q1" value="1">In meeting notes or a doc someone has to re-read later</label>
+        <label class="opt"><input type="radio" name="q1" value="2">In people's heads, or in the call recording</label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="qnum">2.</span>How often does a follow-up slip because nobody clearly owned it?</legend>
+        <label class="opt"><input type="radio" name="q2" value="0">Rarely — every item has a named owner</label>
+        <label class="opt"><input type="radio" name="q2" value="1">Sometimes — ownership is implied, not stated</label>
+        <label class="opt"><input type="radio" name="q2" value="2">Often — "the team" owns it, so nobody does</label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="qnum">3.</span>Due dates agreed in a meeting are usually…</legend>
+        <label class="opt"><input type="radio" name="q3" value="0">Specific dates, confirmed before the call ends</label>
+        <label class="opt"><input type="radio" name="q3" value="1">Loose — "next week", "soon", "when you can"</label>
+        <label class="opt"><input type="radio" name="q3" value="2">Missing — added later, or never</label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="qnum">4.</span>Before a follow-up goes out, are the AI meeting notes checked against what was actually said?</legend>
+        <label class="opt"><input type="radio" name="q4" value="0">Yes — checked against what was actually said on the call</label>
+        <label class="opt"><input type="radio" name="q4" value="1">They get a quick skim</label>
+        <label class="opt"><input type="radio" name="q4" value="2">They're trusted as-is — and they've invented a detail before</label>
+      </fieldset>
+
+      <div class="progress"><div id="bar"></div></div>
+      <div class="progress-label" id="progress-label">0 of 4 answered</div>
+
+      <button type="button" class="cta" id="score-btn" disabled>See my friction score</button>
+    </form>
+
+    <div id="result">
+      <div class="score-row">
+        <div class="score"><span id="score-num">0</span><small>/8</small></div>
+        <div class="band" id="band-name"></div>
+      </div>
+      <p id="band-text"></p>
+      <div class="step"><b>Your first fix</b><span id="band-step"></span></div>
+
+      <div class="signup">
+        <h2>Get one practical follow-up teardown a week</h2>
+        <p>Real workflow breakdowns for agency account managers — the register method, the closeout routine, the prompts. No noise.</p>
+        <form id="signup-form">
+          <input type="email" id="su-email" placeholder="you@youragency.com" required>
+          <select id="su-size">
+            <option value="">Agency size (optional)</option>
+            <option>1–4 people</option>
+            <option>5–12 people</option>
+            <option>13–25 people</option>
+            <option>25+ people</option>
+          </select>
+          <button type="submit" class="cta" id="su-btn">Join the list</button>
+          <div class="form-note" id="su-note"></div>
+        </form>
+      </div>
+
+      <div class="kit">
+        Want the whole system? The <b>Client Follow-up Kit</b> — the checked action register, the meeting closeout routine, and the follow-up templates — is <b>$39</b>. Find it via <b>@followupbots</b> on Instagram.
+      </div>
+      <p class="deeper" style="margin-top:16px; font-size:15px;">Want the deeper version? <a href="./" style="color:var(--teal-dim); font-weight:700;">Take the full 10-question audit</a> for the complete friction picture.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>Built by <a href="https://www.instagram.com/followupbots">@followupbots</a> · Work With Bots</p>
+    <p>AI workflows that turn client meetings into checked follow-ups.</p>
+  </footer>
+</div>
+<script>
+(function(){
+  var form = document.getElementById('audit-form');
+  var bar = document.getElementById('bar');
+  var label = document.getElementById('progress-label');
+  var btn = document.getElementById('score-btn');
+  var totalScore = null;
+
+  function answered(){
+    var n = 0;
+    for (var i = 1; i <= 4; i++){
+      if (form.querySelector('input[name="q' + i + '"]:checked')) n++;
+    }
+    return n;
+  }
+  form.addEventListener('change', function(){
+    var n = answered();
+    bar.style.width = (n * 25) + '%';
+    label.textContent = n + ' of 4 answered';
+    btn.disabled = n < 4;
+  });
+
+  var bands = [
+    { max: 2, name: 'Low friction',
+      text: 'Your follow-ups mostly land. The system works — the risk now is that it lives in habits instead of a shared record, so it breaks the week someone is out.',
+      step: 'Protect it with a 10-minute closeout after every client call: confirm the owner and due date of every action item before anyone leaves the call.' },
+    { max: 5, name: 'Follow-ups are leaking',
+      text: 'Work slips between the meeting and the follow-up — usually at the same seams: no named owner, a loose due date, notes nobody checked. Each leak is small; together they read as unreliability to the client.',
+      step: 'Start a checked action register. After every call, list each action with an owner and a due date, and check the AI notes against what was actually said before anything reaches the client.' },
+    { max: 8, name: 'High friction',
+      text: 'Follow-up debt is costing you client trust. When status questions need a team-wide search and emails go out only after a nudge, clients feel it — even if the work itself is good.',
+      step: 'Pick your busiest client and rebuild their open items into one checked register this week — action, owner, due date, and what was actually said — then send one follow-up written from the register only.' }
+  ];
+
+  btn.addEventListener('click', function(){
+    var score = 0;
+    for (var i = 1; i <= 4; i++){
+      score += parseInt(form.querySelector('input[name="q' + i + '"]:checked').value, 10);
+    }
+    totalScore = score;
+    var band = bands.find(function(b){ return score <= b.max; });
+    document.getElementById('score-num').textContent = score;
+    document.getElementById('band-name').textContent = band.name;
+    document.getElementById('band-text').textContent = band.text;
+    document.getElementById('band-step').textContent = band.step;
+    var r = document.getElementById('result');
+    r.style.display = 'block';
+    r.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('signup-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('su-email').value.trim();
+    var size = document.getElementById('su-size').value;
+    var note = document.getElementById('su-note');
+    var suBtn = document.getElementById('su-btn');
+    if (!email) { note.textContent = 'Add your email first.'; return; }
+    suBtn.disabled = true;
+    note.textContent = 'Joining…';
+    fetch('https://script.google.com/macros/s/AKfycbwTreUhS_3uK1Z-vzx-Y8ay7unm2kbhrEPm6c9Ij5HG97bFYi5UyOUmHwYMSfKFL14/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        email: email,
+        // /20-equivalent so the sheet stays comparable with full-audit scores
+        score: totalScore === null ? '' : String(Math.round(totalScore * 2.5)),
+        agency_size: size || 'not given',
+        audit_version: 'short'
+      }).toString()
+    }).then(function(){
+      note.textContent = 'You\u2019re in. Watch your inbox for the next teardown.';
+      suBtn.textContent = 'Joined \u2713';
+    }).catch(function(){
+      note.textContent = 'That didn\u2019t go through \u2014 try again, or DM "AUDIT" to @followupbots on Instagram.';
+      suBtn.disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>
